@@ -1,17 +1,20 @@
 const express = require("express");
 const app = express();
 
-// 1. Simpan data masuk dari webhook
+// 1. Use middleware to parse the request body
+app.use(express.json());
+
+// 2. Store incoming data from the webhook
 let webhookData = [];
 
-// 2. Endpoint webhook: simpan ke array & kirim respon
+// 3. Webhook endpoint: store data in the array & send a response
 app.post('/webhook', (req, res) => {
   console.log('Received message:', req.body);
-  webhookData.push(req.body); // simpan ke memori
+  webhookData.push(req.body); // save to memory
   res.status(200).send({ status: 'Message received successfully' });
 });
 
-// 3. Endpoint untuk menampilkan data webhook yang sudah masuk
+// 4. Endpoint to display the received webhook data
 app.get('/log', (req, res) => {
   res.send(`
     <h1>Webhook Received Data</h1>
@@ -21,9 +24,7 @@ app.get('/log', (req, res) => {
   `);
 });
 
-
 app.get("/", (req, res) => res.send("Express on Vercel"));
 
-app.listen(3001, () => console.log("Server ready on port 3000."));
-
+// 5. In Vercel, we don't need to call app.listen(), just export the Express handler
 module.exports = app;
