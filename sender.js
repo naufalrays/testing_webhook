@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const webhookUrl = 'http://localhost:3001/webhook'; // Ganti sesuai URL server kamu
+const webhookUrl = 'https://testing-webhook-r10fpirdg-naufalrays-projects.vercel.app/webhook'; // Ganti sesuai URL server kamu
 
 const data = {
     message: 'Hello, this is a test message from sender.js!'

@@ -1,30 +1,35 @@
 const express = require("express");
+const path = require("path");
 const app = express();
 
-// 1. Use middleware to parse the request body
 app.use(express.json());
 
-// 2. Store incoming data from the webhook
-let webhookData = [];
+app.route("/webhook")
+    .get((req, res) => {
+        const hub_mode = req.query['hub.mode'];
+        const hub_challenge = req.query['hub.challenge'];
+        const hub_verify_token = req.query['hub.verify_token'];
 
-// 3. Webhook endpoint: store data in the array & send a response
-app.post('/webhook', (req, res) => {
-  console.log('Received message:', req.body);
-  webhookData.push(req.body); // save to memory
-  res.status(200).send({ status: 'Message received successfully' });
-});
+        if (hub_challenge) {
+            res.send(hub_challenge);
+        } else {
+            res.send("<p>This is GET Request, Hello Webhook!</p>");
+        }
+    })
+    .post((req, res) => {
+        try {
+            console.log(JSON.stringify(req.body, null, 2));
+        } catch (error) {
+            console.log("Error:", error);
+        }
+        res.send("<p>This is POST Request, Hello Webhook!</p>");
+    });
 
-// 4. Endpoint to display the received webhook data
-app.get('/log', (req, res) => {
-  res.send(`
-    <h1>Webhook Received Data</h1>
-    <ul>
-      ${webhookData.map((data, index) => `<li><pre>${JSON.stringify(data, null, 2)}</pre></li>`).join('')}
-    </ul>
-  `);
+app.get('/privacy-policy', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'privacy_policy.html'));
 });
 
 app.get("/", (req, res) => res.send("Express on Vercel"));
 
-// 5. In Vercel, we don't need to call app.listen(), just export the Express handler
+
 module.exports = app;
